@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Frame Rate Conversion Calculator: Duration &amp; Frame Count | フレームレート変換 尺・コマ数 計算</title>
+<meta name="description" content="Free frame rate conversion calculator. See how a 24 to 25 fps or 23.976 to 24 fps conform changes duration and speed, and how many frames a conversion needs. Runs entirely in your browser.">
+<meta name="keywords" content="frame rate conversion calculator, 24 to 25 fps duration, 23.976 to 24 fps, conform frame rate, フレームレート 変換 計算, 24fps 25fps 尺, 23.976 24 違い">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ORBIT Free Video Tools">
+<meta property="og:title" content="Frame Rate Conversion Calculator: Duration &amp; Frame Count">
+<meta property="og:description" content="Free frame rate conversion calculator. See how a 24 to 25 fps or 23.976 to 24 fps conform changes duration and speed, and how many frames a conversion needs. Runs entirely in your browser.">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Frame Rate Conversion Calculator: Duration &amp; Frame Count">
+<meta name="twitter:description" content="Free frame rate conversion calculator. See how a 24 to 25 fps or 23.976 to 24 fps conform changes duration and speed, and how many frames a conversion needs. Runs entirely in your browser.">
+<style>
+:root{--bg:#f7f6f3;--card:#fff;--ink:#1d1d1f;--sub:#5f5f66;--line:#dedcd6;--accent:#1f5f8b;--warn:#a2461c}
+@media (prefers-color-scheme:dark){:root{--bg:#141416;--card:#1e1e22;--ink:#ecebe8;--sub:#a5a4ab;--line:#34343a;--accent:#7fb6dd;--warn:#e8956c}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+main{max-width:760px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:1.7rem;line-height:1.25;margin:.2em 0 .3em}
+h2{font-size:1.15rem;margin:2em 0 .5em}
+p.lead{color:var(--sub);margin-top:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;margin:16px 0}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}
+.tabs button{flex:1;min-width:140px;padding:10px;border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--ink);font:inherit;cursor:pointer}
+.tabs button[aria-selected=true]{background:var(--accent);border-color:var(--accent);color:#fff}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:14px}
+label{display:block;font-size:.85rem;color:var(--sub);margin-bottom:4px}
+input,select{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit}
+input.tc{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.out{margin-top:16px;padding:14px;border-radius:8px;background:var(--bg);border:1px solid var(--line)}
+.big{font-size:1.6rem;font-weight:650;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;overflow-wrap:anywhere}
+.note{font-size:.85rem;color:var(--sub);overflow-wrap:anywhere}
+.warn{color:var(--warn)}
+table{width:100%;border-collapse:collapse;font-size:.92rem}
+th,td{text-align:left;padding:7px 6px;border-bottom:1px solid var(--line)}
+footer{margin-top:40px;font-size:.85rem;color:var(--sub)}
+a{color:var(--accent)}
+[hidden]{display:none!important}
+</style>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Frame Rate Conversion Calculator: Duration & Frame Count", "alternateName": "フレームレート変換 尺・コマ数 計算", "description": "Free frame rate conversion calculator. See how a 24 to 25 fps or 23.976 to 24 fps conform changes duration and speed, and how many frames a conversion needs. Runs entirely in your browser.", "applicationCategory": "MultimediaApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "inLanguage": ["en", "ja"]}</script>
+<link rel="canonical" href="https://aifukugyouacademy-hue.github.io/video-tools/frame-rate-conversion-calculator.html">
+<meta property="og:url" content="https://aifukugyouacademy-hue.github.io/video-tools/frame-rate-conversion-calculator.html">
+</head>
+<body>
+<main>
+<p class="note" style="margin:0 0 8px"><a href="index.html">← ORBIT Free Video Tools</a></p>
+<h1>Frame Rate Conversion Calculator</h1>
+<p class="lead">See how conforming between frame rates changes duration and speed, and how many frames a conversion needs. Everything is calculated in your browser.</p>
+<div class="card">
+  <div class="grid">
+    <div><label for="from">Source frame rate</label><select id="from"></select></div>
+    <div><label for="to">Target frame rate</label><select id="to"></select></div>
+    <div><label for="dur">Source duration (HH:MM:SS)</label><input id="dur" value="00:10:00" autocomplete="off" class="tc"></div>
+  </div>
+  <div class="out" aria-live="polite"><div id="result" class="big">–</div><div id="detail" class="note"></div></div>
+</div>
+<h2>How it works</h2>
+<p>Two different things can happen when frame rates differ. <strong>Conform (slow down or speed up):</strong> the same frames are played at the new rate. The duration becomes duration × source fps ÷ target fps, and audio changes speed and pitch unless it is also corrected. 24 → 25 fps (the classic PAL speed-up) makes a film about 4.17% shorter; 23.976 → 24 makes it 0.1% shorter. <strong>Convert (keep the real duration):</strong> frames are repeated or dropped (or blended) so the length stays the same. The number of frames becomes duration × target fps.</p>
+<p>Frame counts use the exact rates (23.976 = 24000/1001, 29.97 = 30000/1001, 59.94 = 60000/1001).</p>
+<section id="how-to-use"><h2>Quick start</h2><p>Choose the source and target frame rates and type the source duration. You get the frame count, the conformed duration, the speed change and the frame count after a duration-preserving conversion.</p></section>
+<section lang="ja" id="ja"><h2>フレームレート変換の尺・コマ数の計算（無料）</h2><p>24fps を 25fps に変えると尺が何％短くなるか、23.976 と 24 の差、フレームレートを変えたときのコマ数を計算します。「そのまま再生（尺が変わる）」と「尺を保って変換（コマを足す・間引く）」の両方の結果を出します。ブラウザの中だけで動きます。</p><p class="note">検索されそうな言葉：24fps 25fps 変換 尺 / 23.976 24 違い / フレームレート 変換 計算 / コマ数 計算 / 29.97 30 尺 ずれ</p></section>
+<footer>
+<p>Made by ORBIT Color, a small studio that makes subtle cinematic LUTs for DaVinci Resolve and iPhone Apple Log. <a href="https://orbitcolor.gumroad.com">See the free LUT</a> · <a href="https://orbitcolor.gumroad.com/l/vuyipe">Quiet Film LUT pack</a> · <a href="https://orbitcolor.gumroad.com/l/ztytri">iPhone Apple Log LUT pack</a> · <a href="https://orbit-design.booth.pm/" lang="ja">日本の方はBOOTH</a> · <a href="https://www.fiverr.com/orbitdesign_jp">Hire us to edit your video</a> · <a href="https://www.lancers.jp/profile/takahiro-iwama" lang="ja">動画編集のご依頼</a>. Also: <a href="video-bitrate-calculator.html">Bitrate calculator</a> · <a href="subtitle-shift-converter.html">SRT shifter</a> · <a href="aspect-ratio-crop-calculator.html">Crop calculator</a> · <a href="timecode-calculator.html">Timecode calculator</a> · <a href="slowmo-shutter-nd-calculator.html">Slow-mo / shutter / ND</a> · <a href="recording-time-storage-calculator.html">Recording time &amp; storage</a> · <a href="privacy.html">Privacy</a></p>
+</footer>
+</main>
+<script>
+const RATES=[['23.976',24000/1001],['24',24],['25',25],['29.97',30000/1001],['30',30],['50',50],['59.94',60000/1001],['60',60],['120',120]];
+function parseDur(s){const p=String(s).trim().split(':');if(p.length<1||p.length>3||p.some(x=>!/^\d+(\.\d+)?$/.test(x)))return null;let t=0;for(const x of p)t=t*60+parseFloat(x);return t;}
+function conform(durSec,fromFps,toFps){const frames=Math.round(durSec*fromFps);const newDur=frames/toFps;return{frames,newDur,speed:toFps/fromFps*100,diff:newDur-durSec,framesKept:Math.round(durSec*toFps)};}
+function hms(s){const neg=s<0;s=Math.abs(s);const h=Math.floor(s/3600),m=Math.floor((s%3600)/60),x=s-h*3600-m*60;return(neg?'-':'')+String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+x.toFixed(2).padStart(5,'0');}
+if(typeof document!=='undefined'){
+const $=id=>document.getElementById(id);
+RATES.forEach(([n],i)=>{['from','to'].forEach(id=>{const o=document.createElement('option');o.value=i;o.textContent=n+' fps';$(id).appendChild(o);});});
+$('from').value=1;$('to').value=2;
+function calc(){const d=parseDur($('dur').value),a=RATES[$('from').value][1],b=RATES[$('to').value][1];
+ if(d==null||d<=0){$('result').textContent='–';$('detail').textContent='Enter a duration like 01:35:20 or 600.';return;}
+ const o=conform(d,a,b);
+ $('result').textContent=hms(o.newDur);
+ $('detail').innerHTML='<b>Conform</b> (play '+o.frames.toLocaleString('en-US')+' frames at the new rate): '+hms(o.newDur)+', speed '+o.speed.toFixed(3)+'%, '+(o.diff>=0?'+':'')+o.diff.toFixed(2)+' s.<br><b>Convert</b> (keep '+hms(d)+'): '+o.framesKept.toLocaleString('en-US')+' frames at the target rate.';}
+['from','to','dur'].forEach(i=>$(i).addEventListener('input',calc));calc();}
+if(typeof module!=='undefined')module.exports={parseDur,conform,hms};
+</script>
+</body>
+</html>
