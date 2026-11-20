@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aspect Ratio &amp; Crop Calculator for Video | 縦横比・切り抜き 計算</title>
+<meta name="description" content="Free aspect ratio and crop calculator. Find the largest 9:16, 4:5, 1:1 or 2.39:1 crop of any video frame, its offsets, and the exact resize size. Runs entirely in your browser.">
+<meta name="keywords" content="aspect ratio calculator video, 16:9 to 9:16 crop, crop calculator, vertical video crop size, resize keep aspect ratio, ffmpeg crop command, 縦動画 切り抜き 計算, 9:16 クロップ, アスペクト比 計算, ショート動画 サイズ">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ORBIT Free Video Tools">
+<meta property="og:title" content="Aspect Ratio &amp; Crop Calculator for Video">
+<meta property="og:description" content="Free aspect ratio and crop calculator. Find the largest 9:16, 4:5, 1:1 or 2.39:1 crop of any video frame, its offsets, and the exact resize size. Runs entirely in your browser.">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Aspect Ratio &amp; Crop Calculator for Video">
+<meta name="twitter:description" content="Free aspect ratio and crop calculator. Find the largest 9:16, 4:5, 1:1 or 2.39:1 crop of any video frame, its offsets, and the exact resize size. Runs entirely in your browser.">
+<style>
+:root{--bg:#f7f6f3;--card:#fff;--ink:#1d1d1f;--sub:#5f5f66;--line:#dedcd6;--accent:#1f5f8b;--warn:#a2461c;--frame:#c9c6bd}
+@media (prefers-color-scheme:dark){:root{--bg:#141416;--card:#1e1e22;--ink:#ecebe8;--sub:#a5a4ab;--line:#34343a;--accent:#7fb6dd;--warn:#e8956c;--frame:#45454c}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+main{max-width:760px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:1.7rem;line-height:1.25;margin:.2em 0 .3em}
+h2{font-size:1.15rem;margin:2em 0 .5em}
+p.lead{color:var(--sub);margin-top:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;margin:16px 0}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}
+.tabs button{flex:1;min-width:140px;padding:10px;border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--ink);font:inherit;cursor:pointer}
+.tabs button[aria-selected=true]{background:var(--accent);border-color:var(--accent);color:#fff}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:14px}
+label{display:block;font-size:.85rem;color:var(--sub);margin-bottom:4px}
+input,select{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit}
+.out{margin-top:16px;padding:14px;border-radius:8px;background:var(--bg);border:1px solid var(--line)}
+.big{font-size:1.6rem;font-weight:650}
+.note{font-size:.85rem;color:var(--sub)}
+.cmd{display:block;margin-top:8px;padding:8px;border-radius:6px;background:var(--card);border:1px solid var(--line);white-space:pre;overflow-x:auto;font:12px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace}
+.warn{color:var(--warn)}
+.preview{margin-top:14px;display:flex;justify-content:center}
+.frame{position:relative;background:var(--frame);border-radius:4px;max-width:100%}
+.crop{position:absolute;border:2px solid var(--accent);background:color-mix(in srgb,var(--accent) 22%,transparent)}
+table{width:100%;border-collapse:collapse;font-size:.92rem}
+th,td{text-align:left;padding:7px 6px;border-bottom:1px solid var(--line)}
+footer{margin-top:40px;font-size:.85rem;color:var(--sub)}
+a{color:var(--accent)}
+[hidden]{display:none!important}
+</style>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Aspect Ratio & Crop Calculator for Video", "alternateName": "縦横比・切り抜き 計算", "description": "Free aspect ratio and crop calculator. Find the largest 9:16, 4:5, 1:1 or 2.39:1 crop of any video frame, its offsets, and the exact resize size. Runs entirely in your browser.", "applicationCategory": "MultimediaApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "inLanguage": ["en", "ja"]}</script>
+<link rel="canonical" href="https://aifukugyouacademy-hue.github.io/video-tools/aspect-ratio-crop-calculator.html">
+<meta property="og:url" content="https://aifukugyouacademy-hue.github.io/video-tools/aspect-ratio-crop-calculator.html">
+</head>
+<body>
+<main>
+<p class="note" style="margin:0 0 8px"><a href="index.html">← ORBIT Free Video Tools</a></p>
+<h1>Aspect Ratio &amp; Crop Calculator</h1>
+<p class="lead">Turn a 16:9 shot into a 9:16 Short, a 4:5 feed post or a 2.39:1 widescreen frame. Get the largest crop that fits, where it sits, and the exact size to export. Nothing is uploaded.</p>
+
+<div class="card">
+  <div class="tabs" role="tablist">
+    <button role="tab" id="t-crop" aria-selected="true">Crop to a new ratio</button>
+    <button role="tab" id="t-resize" aria-selected="false">Resize, keep ratio</button>
+  </div>
+
+  <div class="grid">
+    <div><label for="sw">Source width (px)</label><input id="sw" type="number" min="1" value="3840"></div>
+    <div><label for="sh">Source height (px)</label><input id="sh" type="number" min="1" value="2160"></div>
+  </div>
+
+  <div id="p-crop" class="grid">
+    <div><label for="ratio">Target ratio</label>
+      <select id="ratio">
+        <option value="9:16" selected>9:16 · Shorts / Reels</option>
+        <option value="4:5">4:5 · Instagram feed</option>
+        <option value="1:1">1:1 · Square</option>
+        <option value="16:9">16:9 · YouTube, TV</option>
+        <option value="4:3">4:3</option>
+        <option value="1.85:1">1.85:1 · Flat</option>
+        <option value="2.39:1">2.39:1 · Scope</option>
+        <option value="custom">Custom…</option>
+      </select></div>
+    <div id="customBox" hidden><label for="custom">Custom ratio (W:H)</label><input id="custom" type="text" value="21:9"></div>
+    <div><label for="dw">Export width (optional)</label><input id="dw" type="number" min="0" value="1080" placeholder="e.g. 1080"></div>
+    <div><label for="pos">Crop position</label>
+      <select id="pos"><option value="0.5">Center</option><option value="0">Left / Top</option><option value="1">Right / Bottom</option></select></div>
+  </div>
+
+  <div id="p-resize" class="grid" hidden>
+    <div><label for="nw">New width (px)</label><input id="nw" type="number" min="0" value="1920"></div>
+    <div><label for="nh">…or new height (px)</label><input id="nh" type="number" min="0" value="" placeholder="leave empty"></div>
+  </div>
+
+  <div class="out" aria-live="polite"><div id="result" class="big">–</div><div id="detail" class="note"></div></div>
+  <div class="preview" aria-hidden="true"><div class="frame" id="frame"><div class="crop" id="crop"></div></div></div>
+</div>
+
+<h2>How it works</h2>
+<p>To crop to a new ratio, the calculator keeps as much of the frame as possible. If the target is narrower than the source (for example 9:16 from 16:9), the full height is kept and the width is cut: crop width = source height × target W ÷ target H. If the target is wider, the full width is kept and the height is cut instead. The offset tells you where the crop starts, measured from the left or top edge, which is what the crop or position fields in DaVinci Resolve, Premiere Pro and FFmpeg expect.</p>
+<p>Sizes are rounded to even numbers because H.264 and H.265 with 4:2:0 color need even width and height. That rounding can shift the ratio by a fraction of a percent, which no viewer will notice.</p>
+<p>FFmpeg users can paste the command shown under the result. It crops first, then scales, so the export keeps full detail from the source.</p>
+
+<h2>Common delivery sizes</h2>
+<table>
+<tr><th>Ratio</th><th>Typical size</th><th>Where</th></tr>
+<tr><td>9:16</td><td>1080 × 1920</td><td>YouTube Shorts, Instagram Reels, TikTok</td></tr>
+<tr><td>4:5</td><td>1080 × 1350</td><td>Instagram feed (portrait)</td></tr>
+<tr><td>1:1</td><td>1080 × 1080</td><td>Square feed posts</td></tr>
+<tr><td>16:9</td><td>1920 × 1080 / 3840 × 2160</td><td>YouTube, TV</td></tr>
+</table>
+
+<section id="how-to-use"><h2>Quick start</h2><p>Enter the source size, choose the target ratio and (optionally) an export width. The box under the result shows where the crop sits in the frame.</p></section>
+<section lang="ja" id="ja"><h2>縦横比・切り抜き（クロップ）計算（無料）</h2><p>横動画を 9:16（ショート・リール）や 4:5、1:1、2.39:1 に切り抜くときの、いちばん大きい切り抜きサイズと位置を計算します。書き出しサイズと FFmpeg のコマンドも出ます。ブラウザの中だけで動きます。</p><p class="note">検索されそうな言葉：縦動画 切り抜き 計算 / 9:16 クロップ / アスペクト比 計算 / 動画 リサイズ 比率 / ショート動画 サイズ</p></section>
+<footer>
+<p>Made by ORBIT Color, a small studio that makes subtle cinematic LUTs for DaVinci Resolve and iPhone Apple Log. <a href="https://orbitcolor.gumroad.com">See the free LUT</a>. Also: <a href="video-bitrate-calculator.html">Bitrate calculator</a> · <a href="subtitle-shift-converter.html">SRT shifter</a> · <a href="timecode-calculator.html">Timecode calculator</a> · <a href="slowmo-shutter-nd-calculator.html">Slow-mo / shutter / ND</a> · <a href="privacy.html">Privacy</a></p>
+</footer>
+</main>
+<script>
+// ---- pure functions (tested in Node) ----
+function gcd(a,b){ a=Math.abs(Math.round(a)); b=Math.abs(Math.round(b)); while(b){ [a,b]=[b,a%b]; } return a||1; }
+function even(n){ return Math.max(2, Math.round(n/2)*2); }
+function parseRatio(s){
+  const m = String(s).trim().match(/^(\d*\.?\d+)\s*[:x×\/]\s*(\d*\.?\d+)$/i);
+  if (!m) return null;
+  const w = +m[1], h = +m[2];
+  return w>0 && h>0 ? { w, h, r: w/h } : null;
+}
+function simplify(w,h){ const g = gcd(w,h); return `${w/g}:${h/g}`; }
+// largest crop of sw×sh with ratio r (w/h); pos 0..1
+function crop(sw, sh, r, pos){
+  let cw, ch;
+  if (sw/sh > r){ ch = sh; cw = even(sh*r); if (cw > sw) cw = sw - sw%2; }
+  else { cw = sw; ch = even(sw/r); if (ch > sh) ch = sh - sh%2; }
+  const x = Math.round((sw-cw)*pos), y = Math.round((sh-ch)*pos);
+  return { cw, ch, x, y, kept: (cw*ch)/(sw*sh) };
+}
+function resizeKeep(sw, sh, nw, nh){
+  if (nw > 0) return { w: even(nw), h: even(nw*sh/sw) };
+  if (nh > 0) return { w: even(nh*sw/sh), h: even(nh) };
+  return null;
+}
+if (typeof module !== 'undefined'){ module.exports = { gcd, even, parseRatio, simplify, crop, resizeKeep }; }
+
+// ---- page ----
+if (typeof document !== 'undefined'){
+const $ = id => document.getElementById(id);
+const num = id => { const v = parseFloat($(id).value); return isFinite(v) && v > 0 ? v : 0; };
+let mode = 'crop';
+function drawPreview(sw, sh, box){
+  const maxW = Math.min(320, $('frame').parentElement.clientWidth || 320), maxH = 200;
+  const k = Math.min(maxW/sw, maxH/sh);
+  const f = $('frame'), c = $('crop');
+  f.style.width = sw*k+'px'; f.style.height = sh*k+'px';
+  if (box){ c.hidden=false; Object.assign(c.style, { left: box.x*k+'px', top: box.y*k+'px', width: box.cw*k+'px', height: box.ch*k+'px' }); }
+  else c.hidden = true;
+}
+function calc(){
+  const sw = num('sw'), sh = num('sh'), r = $('result'), d = $('detail');
+  r.className = 'big';
+  if (!sw || !sh){ r.textContent='–'; d.textContent='Enter the source width and height.'; drawPreview(16,9,null); return; }
+  const src = `Source ${sw} × ${sh} (${simplify(sw,sh)}, ${(sw/sh).toFixed(3)}:1)`;
+  if (mode === 'crop'){
+    const rv = $('ratio').value === 'custom' ? $('custom').value : $('ratio').value;
+    const t = parseRatio(rv);
+    if (!t){ r.textContent='Check the ratio'; r.className='big warn'; d.textContent='Write it as W:H, for example 21:9 or 2.39:1.'; return; }
+    const b = crop(sw, sh, t.r, parseFloat($('pos').value));
+    r.textContent = `Crop ${b.cw} × ${b.ch}`;
+    let txt = `${src}. Offset x ${b.x}, y ${b.y}. Keeps ${(b.kept*100).toFixed(1)}% of the frame.`;
+    let vf = `crop=${b.cw}:${b.ch}:${b.x}:${b.y}`;
+    const dw = num('dw');
+    if (dw){
+      const ow = even(dw), oh = even(dw/t.r);
+      txt += ` Export at ${ow} × ${oh}.`;
+      if (ow > b.cw) txt += ' Note: this upscales the crop, so it will look softer.';
+      vf += `,scale=${ow}:${oh}`;
+    }
+    d.innerHTML = '';
+    d.append(txt);
+    const code = document.createElement('code'); code.className = 'cmd'; code.textContent = `ffmpeg -i in.mp4 -vf "${vf}" -c:a copy out.mp4`; d.append(code);
+    if (dw && even(dw) > b.cw) d.classList.add('warn'); else d.classList.remove('warn');
+    drawPreview(sw, sh, b);
+  } else {
+    const o = resizeKeep(sw, sh, num('nw'), num('nh'));
+    d.classList.remove('warn');
+    if (!o){ r.textContent='–'; d.textContent='Enter a new width or height.'; drawPreview(sw,sh,null); return; }
+    r.textContent = `${o.w} × ${o.h}`;
+    d.textContent = `${src}. Scaled to ${(o.w/sw*100).toFixed(1)}%. Rounded to even numbers for H.264/H.265.`;
+    drawPreview(sw, sh, null);
+  }
+}
+function setMode(m){
+  mode = m;
+  $('t-crop').setAttribute('aria-selected', m==='crop');
+  $('t-resize').setAttribute('aria-selected', m==='resize');
+  $('p-crop').hidden = m!=='crop'; $('p-resize').hidden = m!=='resize';
+  calc();
+}
+$('t-crop').onclick = () => setMode('crop');
+$('t-resize').onclick = () => setMode('resize');
+$('ratio').addEventListener('input', () => { $('customBox').hidden = $('ratio').value !== 'custom'; });
+$('nw').addEventListener('input', () => { if ($('nw').value) $('nh').value=''; });
+$('nh').addEventListener('input', () => { if ($('nh').value) $('nw').value=''; });
+document.querySelectorAll('input,select').forEach(el => el.addEventListener('input', calc));
+window.addEventListener('resize', calc);
+calc();
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SRT Subtitle Shifter &amp; SRT ⇄ VTT Converter | 字幕 ずらし・SRT VTT 変換</title>
+<meta name="description" content="Free subtitle tool. Shift SRT or WebVTT timings earlier or later, fix frame-rate drift (23.976 ⇄ 25 fps), and convert between SRT and VTT. Runs entirely in your browser.">
+<meta name="keywords" content="srt shift, subtitle sync, shift subtitles, srt to vtt, vtt to srt, subtitle delay, subtitle frame rate fix, 字幕 ずらし, SRT 時間 ずらす, 字幕 ずれ 直す, SRT VTT 変換">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ORBIT Free Video Tools">
+<meta property="og:title" content="SRT Subtitle Shifter &amp; SRT ⇄ VTT Converter">
+<meta property="og:description" content="Free subtitle tool. Shift SRT or WebVTT timings earlier or later, fix frame-rate drift (23.976 ⇄ 25 fps), and convert between SRT and VTT. Runs entirely in your browser.">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SRT Subtitle Shifter &amp; SRT ⇄ VTT Converter">
+<meta name="twitter:description" content="Free subtitle tool. Shift SRT or WebVTT timings earlier or later, fix frame-rate drift (23.976 ⇄ 25 fps), and convert between SRT and VTT. Runs entirely in your browser.">
+<style>
+:root{--bg:#f7f6f3;--card:#fff;--ink:#1d1d1f;--sub:#5f5f66;--line:#dedcd6;--accent:#1f5f8b;--warn:#a2461c}
+@media (prefers-color-scheme:dark){:root{--bg:#141416;--card:#1e1e22;--ink:#ecebe8;--sub:#a5a4ab;--line:#34343a;--accent:#7fb6dd;--warn:#e8956c}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+main{max-width:760px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:1.7rem;line-height:1.25;margin:.2em 0 .3em}
+h2{font-size:1.15rem;margin:2em 0 .5em}
+p.lead{color:var(--sub);margin-top:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;margin:16px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:14px}
+label{display:block;font-size:.85rem;color:var(--sub);margin-bottom:4px}
+input,select,textarea{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit}
+textarea{font:13px/1.45 ui-monospace,SFMono-Regular,Menlo,monospace;min-height:180px;resize:vertical}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+button{padding:10px 14px;border:1px solid var(--accent);border-radius:8px;background:var(--accent);color:#fff;font:inherit;cursor:pointer}
+button.ghost{background:transparent;color:var(--accent)}
+.file{position:relative;overflow:hidden;display:inline-block}
+.file input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.out{margin-top:16px}
+.note{font-size:.85rem;color:var(--sub)}
+.warn{color:var(--warn)}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em}
+footer{margin-top:40px;font-size:.85rem;color:var(--sub)}
+a{color:var(--accent)}
+</style>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "SRT Subtitle Shifter & SRT ⇄ VTT Converter", "alternateName": "字幕 ずらし・SRT VTT 変換", "description": "Free subtitle tool. Shift SRT or WebVTT timings earlier or later, fix frame-rate drift (23.976 ⇄ 25 fps), and convert between SRT and VTT. Runs entirely in your browser.", "applicationCategory": "MultimediaApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "inLanguage": ["en", "ja"]}</script>
+<link rel="canonical" href="https://aifukugyouacademy-hue.github.io/video-tools/subtitle-shift-converter.html">
+<meta property="og:url" content="https://aifukugyouacademy-hue.github.io/video-tools/subtitle-shift-converter.html">
+</head>
+<body>
+<main>
+<p class="note" style="margin:0 0 8px"><a href="index.html">← ORBIT Free Video Tools</a></p>
+<h1>SRT Subtitle Shifter &amp; SRT ⇄ VTT Converter</h1>
+<p class="lead">Move every subtitle earlier or later, fix subtitles that drift because of a frame-rate change, and convert between SRT and WebVTT. Your file never leaves your browser.</p>
+
+<div class="card">
+  <div class="row" style="margin-top:0">
+    <span class="file"><button class="ghost" type="button">Open .srt / .vtt file</button><input id="file" type="file" accept=".srt,.vtt,text/plain"></span>
+    <button class="ghost" type="button" id="sample">Load sample</button>
+  </div>
+  <div style="margin-top:12px"><label for="src">Subtitles (paste here or open a file)</label>
+  <textarea id="src" spellcheck="false" placeholder="1&#10;00:00:01,000 --> 00:00:03,500&#10;Hello there."></textarea></div>
+
+  <div class="grid">
+    <div><label for="shift">Shift (seconds, − = earlier)</label><input id="shift" type="number" step="0.001" value="0"></div>
+    <div><label for="fps">Frame-rate fix (optional)</label>
+      <select id="fps">
+        <option value="1">None</option>
+        <option value="23.976/25">Subs made for 23.976 fps, video is 25 fps</option>
+        <option value="25/23.976">Subs made for 25 fps, video is 23.976 fps</option>
+        <option value="24/25">Subs made for 24 fps, video is 25 fps</option>
+        <option value="25/24">Subs made for 25 fps, video is 24 fps</option>
+        <option value="23.976/24">Subs made for 23.976 fps, video is 24 fps</option>
+        <option value="24/23.976">Subs made for 24 fps, video is 23.976 fps</option>
+      </select></div>
+    <div><label for="fmt">Output format</label>
+      <select id="fmt"><option value="srt">SRT</option><option value="vtt">WebVTT (.vtt)</option></select></div>
+  </div>
+
+  <div class="out">
+    <div id="status" class="note" aria-live="polite">Paste subtitles to start.</div>
+    <label for="dst" style="margin-top:10px">Result</label>
+    <textarea id="dst" spellcheck="false" readonly></textarea>
+    <div class="row">
+      <button type="button" id="dl">Download</button>
+      <button type="button" class="ghost" id="copy">Copy</button>
+    </div>
+  </div>
+</div>
+
+<h2>How to use it</h2>
+<p><strong>Subtitles appear too late?</strong> Enter a negative shift, for example <code>-1.5</code> moves every line 1.5 seconds earlier. <strong>Too early?</strong> Use a positive number. Lines that would start before 0:00 are clamped to 0:00 and counted in the status line.</p>
+<p><strong>Subtitles start in sync but drift further off over time?</strong> That is a frame-rate mismatch, not an offset. European (PAL) releases often play 23.976 fps film at 25 fps, which makes the video about 4% shorter, so subtitles made for the 23.976 fps version fall further behind with every minute. Pick the line that describes your files; every timestamp is multiplied by the ratio (for example × 23.976 ÷ 25), and the shift is applied after that.</p>
+<p><strong>SRT or VTT?</strong> SRT uses a comma before milliseconds (<code>00:01:02,500</code>) and numbered blocks. WebVTT starts with <code>WEBVTT</code>, uses a dot (<code>00:01:02.500</code>) and is what the HTML5 <code>&lt;track&gt;</code> element and many web players expect. YouTube, Vimeo, DaVinci Resolve and Premiere Pro import both. When converting VTT to SRT, cue settings such as <code>align:start</code> and the header notes are dropped because SRT has no place for them.</p>
+
+<section id="how-to-use"><h2>Quick start</h2><p>Paste your subtitles or open a file, set the shift in seconds or choose a frame-rate fix, pick SRT or WebVTT, then download or copy the result.</p></section>
+<section lang="ja" id="ja"><h2>字幕（SRT・VTT）の時間ずらし・変換（無料）</h2><p>字幕ファイルの時間を、まとめて早める・遅らせる道具です。途中からずれていくときはフレームレート（23.976⇄25 など）の直しができます。SRT と VTT の相互変換もできます。ファイルはブラウザの中だけで読み、送信されません。</p><p class="note">検索されそうな言葉：字幕 ずらし / SRT 時間 ずらす / 字幕 ズレ 直し / SRT VTT 変換 / 字幕 フレームレート</p></section>
+<footer>
+<p>Made by ORBIT Color, a small studio that makes subtle cinematic LUTs for DaVinci Resolve and iPhone Apple Log. <a href="https://orbitcolor.gumroad.com">See the free LUT</a>. Also: <a href="video-bitrate-calculator.html">Bitrate calculator</a> · <a href="aspect-ratio-crop-calculator.html">Crop calculator</a> · <a href="timecode-calculator.html">Timecode calculator</a> · <a href="slowmo-shutter-nd-calculator.html">Slow-mo / shutter / ND</a> · <a href="privacy.html">Privacy</a></p>
+</footer>
+</main>
+<script>
+// ---- pure functions (tested in Node) ----
+function toMs(s){
+  const m = s.trim().match(/^(?:(\d+):)?(\d{1,2}):(\d{2})[,.](\d{1,3})$/);
+  if (!m) return null;
+  return ((+(m[1]||0))*3600 + (+m[2])*60 + (+m[3]))*1000 + +(m[4].padEnd(3,'0'));
+}
+function fmtMs(ms, sep){
+  ms = Math.max(0, Math.round(ms));
+  const h = Math.floor(ms/3600000), m = Math.floor(ms%3600000/60000), s = Math.floor(ms%60000/1000), r = ms%1000;
+  const p = (n,w=2) => String(n).padStart(w,'0');
+  return `${p(h)}:${p(m)}:${p(s)}${sep}${p(r,3)}`;
+}
+function parse(text){
+  text = text.replace(/^﻿/,'').replace(/\r\n?/g,'\n');
+  const blocks = text.split(/\n{2,}/);
+  const cues = [];
+  for (const b of blocks){
+    const lines = b.split('\n').filter((l,i,a)=> !(i===a.length-1 && l===''));
+    const ti = lines.findIndex(l => l.includes('-->'));
+    if (ti < 0) continue;                       // WEBVTT header, NOTE, STYLE, stray numbers
+    const [a, rest] = lines[ti].split('-->');
+    const bParts = rest.trim().split(/\s+/);
+    const start = toMs(a), end = toMs(bParts[0]);
+    if (start === null || end === null) continue;
+    cues.push({ start, end, settings: bParts.slice(1).join(' '), text: lines.slice(ti+1).join('\n') });
+  }
+  return cues;
+}
+function transform(cues, shiftMs, ratio){
+  let clamped = 0;
+  const out = cues.map(c => {
+    let s = c.start*ratio + shiftMs, e = c.end*ratio + shiftMs;
+    if (s < 0){ clamped++; s = 0; }
+    if (e < 0) e = 0;
+    return { ...c, start: Math.round(s), end: Math.round(e) };
+  });
+  return { cues: out, clamped };
+}
+function serialize(cues, fmt){
+  if (fmt === 'vtt'){
+    return 'WEBVTT\n\n' + cues.map(c => `${fmtMs(c.start,'.')} --> ${fmtMs(c.end,'.')}${c.settings? ' '+c.settings:''}\n${c.text}`).join('\n\n') + '\n';
+  }
+  return cues.map((c,i) => `${i+1}\n${fmtMs(c.start,',')} --> ${fmtMs(c.end,',')}\n${c.text}`).join('\n\n') + '\n';
+}
+function ratioOf(v){ const [a,b] = String(v).split('/').map(Number); return b ? a/b : 1; }
+if (typeof module !== 'undefined'){ module.exports = { toMs, fmtMs, parse, transform, serialize, ratioOf }; }
+
+// ---- page ----
+if (typeof document !== 'undefined'){
+const $ = id => document.getElementById(id);
+let srcName = 'subtitles';
+function run(){
+  const text = $('src').value;
+  if (!text.trim()){ $('dst').value=''; $('status').textContent='Paste subtitles to start.'; $('status').className='note'; return; }
+  const cues = parse(text);
+  if (!cues.length){ $('dst').value=''; $('status').textContent='No subtitle timings found. Check that lines look like 00:00:01,000 --> 00:00:03,500.'; $('status').className='note warn'; return; }
+  const shift = Math.round((parseFloat($('shift').value)||0)*1000);
+  const { cues: out, clamped } = transform(cues, shift, ratioOf($('fps').value));
+  $('dst').value = serialize(out, $('fmt').value);
+  let msg = `${cues.length} subtitle${cues.length>1?'s':''} · first line now at ${fmtMs(out[0].start,'.')} · last ends at ${fmtMs(out[out.length-1].end,'.')}`;
+  if (clamped) msg += ` · ${clamped} line${clamped>1?'s':''} clamped to 0:00`;
+  $('status').textContent = msg; $('status').className = clamped ? 'note warn' : 'note';
+}
+$('file').onchange = e => {
+  const f = e.target.files[0]; if (!f) return;
+  srcName = f.name.replace(/\.(srt|vtt|txt)$/i,'');
+  if (/\.vtt$/i.test(f.name)) $('fmt').value = 'srt';
+  const r = new FileReader(); r.onload = () => { $('src').value = r.result; run(); }; r.readAsText(f);
+};
+$('sample').onclick = () => {
+  $('src').value = '1\n00:00:02,000 --> 00:00:04,500\nThis line shows up a little too late.\n\n2\n00:00:04,000 --> 00:00:06,250\nShift it by -1.5 seconds and check the result.\n';
+  $('shift').value = '-1.5'; srcName = 'sample'; run();
+};
+$('dl').onclick = () => {
+  if (!$('dst').value) return;
+  const ext = $('fmt').value;
+  const blob = new Blob([$('dst').value], { type: ext==='vtt' ? 'text/vtt' : 'application/x-subrip' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `${srcName}-fixed.${ext}`; a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+};
+$('copy').onclick = () => { if ($('dst').value) navigator.clipboard.writeText($('dst').value); };
+['src','shift','fps','fmt'].forEach(id => $(id).addEventListener('input', run));
+run();
+}
+</script>
+</body>
+</html>

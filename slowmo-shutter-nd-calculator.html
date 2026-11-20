@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Slow Motion, Shutter Speed &amp; ND Filter Calculator for Video | スロー・シャッター・ND 計算</title>
+<meta name="description" content="Free calculator for video shooters. Slow-motion speed from shooting and timeline fps, 180-degree shutter rule and shutter angle to shutter speed, and ND filter stops to filter factor. Runs entirely in your browser.">
+<meta name="keywords" content="slow motion calculator, 180 degree shutter rule, shutter angle calculator, ND filter stops calculator, shutter speed fps, スローモーション 計算, シャッタースピード 180度, NDフィルター 計算, 動画 フレームレート スロー">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ORBIT Free Video Tools">
+<meta property="og:title" content="Slow Motion, Shutter Speed &amp; ND Filter Calculator for Video">
+<meta property="og:description" content="Free calculator for video shooters. Slow-motion speed from shooting and timeline fps, 180-degree shutter rule and shutter angle to shutter speed, and ND filter stops to filter factor. Runs entirely in your browser.">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Slow Motion, Shutter Speed &amp; ND Filter Calculator for Video">
+<meta name="twitter:description" content="Free calculator for video shooters. Slow-motion speed from shooting and timeline fps, 180-degree shutter rule and shutter angle to shutter speed, and ND filter stops to filter factor. Runs entirely in your browser.">
+<style>
+:root{--bg:#f7f6f3;--card:#fff;--ink:#1d1d1f;--sub:#5f5f66;--line:#dedcd6;--accent:#1f5f8b;--warn:#a2461c}
+@media (prefers-color-scheme:dark){:root{--bg:#141416;--card:#1e1e22;--ink:#ecebe8;--sub:#a5a4ab;--line:#34343a;--accent:#7fb6dd;--warn:#e8956c}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+main{max-width:760px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:1.7rem;line-height:1.25;margin:.2em 0 .3em}
+h2{font-size:1.15rem;margin:2em 0 .5em}
+p.lead{color:var(--sub);margin-top:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;margin:16px 0}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}
+.tabs button{flex:1;min-width:140px;padding:10px;border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--ink);font:inherit;cursor:pointer}
+.tabs button[aria-selected=true]{background:var(--accent);border-color:var(--accent);color:#fff}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:14px}
+label{display:block;font-size:.85rem;color:var(--sub);margin-bottom:4px}
+input,select{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit}
+input.tc{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.out{margin-top:16px;padding:14px;border-radius:8px;background:var(--bg);border:1px solid var(--line)}
+.big{font-size:1.6rem;font-weight:650;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;overflow-wrap:anywhere}
+.note{font-size:.85rem;color:var(--sub);overflow-wrap:anywhere}
+.warn{color:var(--warn)}
+table{width:100%;border-collapse:collapse;font-size:.92rem}
+th,td{text-align:left;padding:7px 6px;border-bottom:1px solid var(--line)}
+footer{margin-top:40px;font-size:.85rem;color:var(--sub)}
+a{color:var(--accent)}
+[hidden]{display:none!important}
+</style>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Slow Motion, Shutter & ND Filter Calculator for Video", "alternateName": "スロー・シャッター・ND 計算", "description": "Free calculator for video shooters. Slow-motion speed from shooting and timeline fps, 180-degree shutter rule and shutter angle to shutter speed, and ND filter stops to filter factor. Runs entirely in your browser.", "applicationCategory": "MultimediaApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "inLanguage": ["en", "ja"]}</script>
+<link rel="canonical" href="https://aifukugyouacademy-hue.github.io/video-tools/slowmo-shutter-nd-calculator.html">
+<meta property="og:url" content="https://aifukugyouacademy-hue.github.io/video-tools/slowmo-shutter-nd-calculator.html">
+</head>
+<body>
+<main>
+<p class="note" style="margin:0 0 8px"><a href="index.html">← ORBIT Free Video Tools</a></p>
+<h1>Slow Motion, Shutter &amp; ND Calculator</h1>
+<p class="lead">Work out how slow your footage will play, what shutter speed gives a natural look, and how many stops an ND filter cuts. Everything is calculated in your browser.</p>
+
+<div class="card">
+  <div class="tabs" role="tablist">
+    <button role="tab" id="t-slow" aria-selected="true">Slow motion</button>
+    <button role="tab" id="t-shut" aria-selected="false">Shutter</button>
+    <button role="tab" id="t-nd" aria-selected="false">ND filter</button>
+  </div>
+
+  <div id="p-slow" class="grid">
+    <div><label for="shoot">Shooting frame rate (fps)</label><input id="shoot" type="number" min="1" step="any" value="120"></div>
+    <div><label for="tl">Timeline / delivery frame rate (fps)</label><input id="tl" type="number" min="1" step="any" value="24"></div>
+    <div><label for="clip">Real-time action length (seconds)</label><input id="clip" type="number" min="0" step="any" value="2"></div>
+  </div>
+  <div id="p-shut" class="grid" hidden>
+    <div><label for="sfps">Shooting frame rate (fps)</label><input id="sfps" type="number" min="1" step="any" value="24"></div>
+    <div><label for="ang">Shutter angle (degrees)</label><input id="ang" type="number" min="1" max="360" step="any" value="180"></div>
+    <div><label for="spd">…or shutter speed (1 / x second)</label><input id="spd" type="number" min="1" step="any" placeholder="e.g. 48"></div>
+  </div>
+  <div id="p-nd" class="grid" hidden>
+    <div><label for="stops">ND strength in stops</label><input id="stops" type="number" min="0" step="any" value="3"></div>
+    <div><label for="factor">…or ND factor (e.g. 8 for ND8)</label><input id="factor" type="number" min="1" step="any" placeholder="e.g. 64"></div>
+    <div><label for="ndspd">Shutter speed before ND (1 / x second)</label><input id="ndspd" type="number" min="1" step="any" value="500"></div>
+  </div>
+
+  <div class="out" aria-live="polite"><div id="result" class="big">–</div><div id="detail" class="note"></div></div>
+</div>
+
+<h2>How it works</h2>
+<p><strong>Slow motion.</strong> If you shoot at 120 fps and play on a 24 fps timeline, each second of action takes 120 ÷ 24 = 5 seconds on screen, so playback speed is 24 ÷ 120 = 20%. Use a shooting rate that is a whole multiple of the timeline rate when you can; 23.976 ⇄ 24 differences are usually too small to notice.</p>
+<p><strong>180-degree shutter rule.</strong> Shutter speed = 1 ÷ (fps × 360 ÷ angle). At 24 fps and 180° that is 1/48 second, which gives natural-looking motion blur. A smaller angle (for example 90°, 1/96) looks sharper and choppier; a larger angle blurs more. Cameras usually offer the nearest speed, such as 1/50 for 24 fps.</p>
+<p><strong>ND filters.</strong> One stop halves the light. ND factor = 2 to the power of stops (ND8 = 3 stops, ND64 = 6 stops, ND1000 = about 10 stops). To keep your shutter speed at 180° outdoors, add ND instead of speeding up the shutter.</p>
+
+<h2>Common ND filters</h2>
+<table>
+<tr><th>Name</th><th>Factor</th><th>Stops</th></tr>
+<tr><td>ND2 / ND0.3</td><td>2</td><td>1</td></tr>
+<tr><td>ND4 / ND0.6</td><td>4</td><td>2</td></tr>
+<tr><td>ND8 / ND0.9</td><td>8</td><td>3</td></tr>
+<tr><td>ND64 / ND1.8</td><td>64</td><td>6</td></tr>
+<tr><td>ND1000 / ND3.0</td><td>1,024 (about 1,000)</td><td>10</td></tr>
+</table>
+
+<section id="how-to-use"><h2>Quick start</h2><p>Pick a tab. In Slow motion, enter the shooting and timeline frame rates. In Shutter, enter the frame rate and angle (or a shutter speed). In ND filter, enter the stops or the factor.</p></section>
+<section lang="ja" id="ja"><h2>スローモーション・シャッタースピード・NDフィルター計算（無料）</h2><p>撮影フレームレートと編集フレームレートから、スローになる割合を計算します。180度ルール（24fps なら 1/48 秒）のシャッタースピードやシャッター角度、ND フィルターの段数と倍数の変換もできます。ブラウザの中だけで動き、データは送信されません。</p><p class="note">検索されそうな言葉：スローモーション 計算 / 120fps 24fps スロー / シャッタースピード 180度 / シャッター角度 計算 / ND フィルター 段数 計算</p></section>
+<footer>
+<p>Made by ORBIT Color, a small studio that makes subtle cinematic LUTs for DaVinci Resolve and iPhone Apple Log. <a href="https://orbitcolor.gumroad.com">See the free LUT</a>. Also: <a href="video-bitrate-calculator.html">Bitrate calculator</a> · <a href="subtitle-shift-converter.html">SRT shifter</a> · <a href="aspect-ratio-crop-calculator.html">Crop calculator</a> · <a href="timecode-calculator.html">Timecode calculator</a> · <a href="privacy.html">Privacy</a></p>
+</footer>
+</main>
+<script>
+// ---- pure functions ----
+function slowMo(shoot, tl, clip){
+  if(!(shoot>0)||!(tl>0)) return null;
+  const speed = tl/shoot*100, factor = shoot/tl;
+  return { speed, factor, screen: clip>0 ? clip*factor : null };
+}
+function shutterFromAngle(fps, angle){ return fps*360/angle; }   // returns x in 1/x s
+function angleFromShutter(fps, x){ return fps*360/x; }
+function stopsToFactor(s){ return Math.pow(2,s); }
+function factorToStops(f){ return Math.log2(f); }
+// ---- UI ----
+if (typeof document !== 'undefined'){
+const $=id=>document.getElementById(id), num=id=>parseFloat($(id).value);
+const fmt=(n,d=2)=>Number.isFinite(n)?(+n.toFixed(d)).toLocaleString('en-US'):'–';
+const tabs=['slow','shut','nd'];
+function show(t){tabs.forEach(k=>{$('t-'+k).setAttribute('aria-selected',k===t);$('p-'+k).hidden=k!==t;});calc(t);}
+let cur='slow',last=null;
+function calc(t){
+  cur=t||cur; const r=$('result'), d=$('detail');
+  if(cur==='slow'){
+    const o=slowMo(num('shoot'),num('tl'),num('clip'));
+    if(!o){r.textContent='–';d.textContent='Enter both frame rates.';return;}
+    r.textContent=fmt(o.speed,1)+'% speed';
+    d.textContent='Slowed '+fmt(o.factor,2)+'×.'+(o.screen!=null?' '+fmt(num('clip'),2)+' s of action plays for '+fmt(o.screen,2)+' s.':'')+(o.speed>=100?' (100% or more is not slow motion.)':'');
+  } else if(cur==='shut'){
+    const fps=num('sfps'); if(!(fps>0)){r.textContent='–';d.textContent='Enter the frame rate.';return;}
+    let x,ang;
+    if(last==='spd'&&num('spd')>0){x=num('spd');ang=angleFromShutter(fps,x);}
+    else{ang=num('ang');if(!(ang>0&&ang<=360)){r.textContent='–';d.textContent='Angle must be between 0 and 360.';return;}x=shutterFromAngle(fps,ang);}
+    r.textContent='1/'+fmt(x,1)+' s';
+    d.textContent='Shutter angle '+fmt(ang,1)+'° at '+fmt(fps,3)+' fps.'+(ang>360?' Longer than one frame: not possible.':'');
+  } else {
+    let s;
+    if(last==='factor'&&num('factor')>=1) s=factorToStops(num('factor'));
+    else s=num('stops');
+    if(!(s>=0)){r.textContent='–';d.textContent='Enter the stops or the factor.';return;}
+    const f=stopsToFactor(s);
+    r.textContent=fmt(s,2)+' stops = ND'+fmt(f,1);
+    const sp=num('ndspd');
+    d.textContent=(sp>0?'Shutter 1/'+fmt(sp,0)+' with this ND is as bright as 1/'+fmt(sp/f,1)+' without it (equal exposure).':'');
+  }
+}
+tabs.forEach(k=>$('t-'+k).addEventListener('click',()=>show(k)));
+['shoot','tl','clip','sfps','ndspd'].forEach(id=>$(id).addEventListener('input',()=>calc()));
+$('ang').addEventListener('input',()=>{last='ang';$('spd').value='';calc();});
+$('spd').addEventListener('input',()=>{last='spd';calc();});
+$('stops').addEventListener('input',()=>{last='stops';$('factor').value='';calc();});
+$('factor').addEventListener('input',()=>{last='factor';calc();});
+calc('slow');
+}
+if (typeof module !== 'undefined') module.exports={slowMo,shutterFromAngle,angleFromShutter,stopsToFactor,factorToStops};
+</script>
+</body>
+</html>

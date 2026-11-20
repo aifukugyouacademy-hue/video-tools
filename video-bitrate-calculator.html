@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Video Bitrate &amp; File Size Calculator | 動画 ビットレート・容量 計算</title>
+<meta name="description" content="Free video bitrate and file size calculator. Work out how big an export will be, or which bitrate fits a size limit. Runs entirely in your browser.">
+<meta name="keywords" content="video bitrate calculator, file size calculator, video file size, youtube recommended bitrate, mbps to gb, bitrate for target size, ビットレート 計算, 動画 容量 計算, ファイルサイズ 計算, YouTube 推奨 ビットレート">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ORBIT Free Video Tools">
+<meta property="og:title" content="Video Bitrate &amp; File Size Calculator">
+<meta property="og:description" content="Free video bitrate and file size calculator. Work out how big an export will be, or which bitrate fits a size limit. Runs entirely in your browser.">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Video Bitrate &amp; File Size Calculator">
+<meta name="twitter:description" content="Free video bitrate and file size calculator. Work out how big an export will be, or which bitrate fits a size limit. Runs entirely in your browser.">
+<style>
+:root{--bg:#f7f6f3;--card:#fff;--ink:#1d1d1f;--sub:#5f5f66;--line:#dedcd6;--accent:#1f5f8b;--warn:#a2461c}
+@media (prefers-color-scheme:dark){:root{--bg:#141416;--card:#1e1e22;--ink:#ecebe8;--sub:#a5a4ab;--line:#34343a;--accent:#7fb6dd;--warn:#e8956c}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+main{max-width:760px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:1.7rem;line-height:1.25;margin:.2em 0 .3em}
+h2{font-size:1.15rem;margin:2em 0 .5em}
+p.lead{color:var(--sub);margin-top:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;margin:16px 0}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}
+.tabs button{flex:1;min-width:140px;padding:10px;border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--ink);font:inherit;cursor:pointer}
+.tabs button[aria-selected=true]{background:var(--accent);border-color:var(--accent);color:#fff}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:14px}
+label{display:block;font-size:.85rem;color:var(--sub);margin-bottom:4px}
+input,select{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit}
+.dur{display:flex;gap:6px}
+.dur input{min-width:0}
+.out{margin-top:16px;padding:14px;border-radius:8px;background:var(--bg);border:1px solid var(--line)}
+.big{font-size:1.6rem;font-weight:650}
+.note{font-size:.85rem;color:var(--sub)}
+.warn{color:var(--warn)}
+table{width:100%;border-collapse:collapse;font-size:.92rem}
+th,td{text-align:left;padding:7px 6px;border-bottom:1px solid var(--line)}
+footer{margin-top:40px;font-size:.85rem;color:var(--sub)}
+a{color:var(--accent)}
+[hidden]{display:none!important}
+</style>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Video Bitrate & File Size Calculator", "alternateName": "動画 ビットレート・容量 計算", "description": "Free video bitrate and file size calculator. Work out how big an export will be, or which bitrate fits a size limit. Runs entirely in your browser.", "applicationCategory": "MultimediaApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "inLanguage": ["en", "ja"]}</script>
+<link rel="canonical" href="https://aifukugyouacademy-hue.github.io/video-tools/video-bitrate-calculator.html">
+<meta property="og:url" content="https://aifukugyouacademy-hue.github.io/video-tools/video-bitrate-calculator.html">
+</head>
+<body>
+<main>
+<p class="note" style="margin:0 0 8px"><a href="index.html">← ORBIT Free Video Tools</a></p>
+<h1>Video Bitrate &amp; File Size Calculator</h1>
+<p class="lead">Find out how large an export will be, or which bitrate fits a size limit. Everything is calculated in your browser; no video is uploaded.</p>
+
+<div class="card">
+  <div class="tabs" role="tablist">
+    <button role="tab" id="t-size" aria-selected="true">Bitrate → File size</button>
+    <button role="tab" id="t-rate" aria-selected="false">File size → Bitrate</button>
+  </div>
+
+  <div class="grid">
+    <div><label>Duration (h : m : s)</label>
+      <div class="dur"><input id="h" type="number" min="0" value="0" aria-label="hours"><input id="m" type="number" min="0" value="10" aria-label="minutes"><input id="s" type="number" min="0" value="0" aria-label="seconds"></div></div>
+    <div><label for="audio">Audio bitrate (kbps)</label><input id="audio" type="number" min="0" value="320"></div>
+  </div>
+
+  <div id="p-size" class="grid">
+    <div><label for="preset">Preset (optional)</label>
+      <select id="preset">
+        <option value="">Custom</option>
+        <option value="5">720p 24–30 fps · 5 Mbps</option>
+        <option value="7.5">720p 50–60 fps · 7.5 Mbps</option>
+        <option value="8">1080p 24–30 fps · 8 Mbps</option>
+        <option value="12">1080p 50–60 fps · 12 Mbps</option>
+        <option value="16">1440p 24–30 fps · 16 Mbps</option>
+        <option value="24">1440p 50–60 fps · 24 Mbps</option>
+        <option value="40">4K 24–30 fps · 35–45 Mbps (mid)</option>
+        <option value="60">4K 50–60 fps · 53–68 Mbps (mid)</option>
+      </select></div>
+    <div><label for="vrate">Video bitrate (Mbps)</label><input id="vrate" type="number" min="0" step="0.1" value="8"></div>
+  </div>
+
+  <div id="p-rate" class="grid" hidden>
+    <div><label for="size">Target file size</label><input id="size" type="number" min="0" step="0.1" value="500"></div>
+    <div><label for="unit">Unit</label><select id="unit"><option value="1">MB</option><option value="1000">GB</option></select></div>
+    <div><label for="margin">Safety margin (%)</label><input id="margin" type="number" min="0" max="50" value="3"></div>
+  </div>
+
+  <div class="out" aria-live="polite"><div id="result" class="big">–</div><div id="detail" class="note"></div></div>
+</div>
+
+<h2>How it works</h2>
+<p>File size = (video bitrate + audio bitrate) × duration ÷ 8. Bitrates are in bits per second, so dividing by 8 turns bits into bytes. This calculator uses decimal units (1 MB = 1,000,000 bytes), the same as macOS Finder and most upload limits. Windows Explorer shows binary units, so the same file looks about 5–7% smaller there.</p>
+<p>With variable bitrate (VBR) exports, the real file can land above or below the estimate because the encoder spends more bits on busy shots. When you must stay under a hard limit, keep the safety margin at a few percent. Container overhead (MP4/MOV) is usually under 1% and is not included.</p>
+
+<h2>Recommended upload bitrates for YouTube (SDR)</h2>
+<table>
+<tr><th>Resolution</th><th>24 / 25 / 30 fps</th><th>48 / 50 / 60 fps</th></tr>
+<tr><td>2160p (4K)</td><td>35–45 Mbps</td><td>53–68 Mbps</td></tr>
+<tr><td>1440p</td><td>16 Mbps</td><td>24 Mbps</td></tr>
+<tr><td>1080p</td><td>8 Mbps</td><td>12 Mbps</td></tr>
+<tr><td>720p</td><td>5 Mbps</td><td>7.5 Mbps</td></tr>
+</table>
+<p class="note">Source: YouTube Help, “Recommended upload encoding settings” (checked 2026-11-19). Recommended audio: 128 kbps mono, 384 kbps stereo, 512 kbps 5.1.</p>
+
+<section id="how-to-use"><h2>Quick start</h2><p>Pick a tab, enter the duration and bitrates (or a size limit), and read the result. The presets fill in YouTube's recommended video bitrates.</p></section>
+<section lang="ja" id="ja"><h2>動画のビットレート・容量 計算（無料）</h2><p>書き出した動画の容量の目安と、「500MB に収めたい」ときに使えるビットレートを計算します。YouTube の推奨ビットレート表つき。ブラウザの中だけで動き、動画はアップロードされません。</p><p class="note">検索されそうな言葉：ビットレート 計算 / 動画 容量 計算 / ファイルサイズ 計算 / YouTube 推奨ビットレート / 動画 圧縮 目安</p></section>
+<footer>
+<p>Made by ORBIT Color, a small studio that makes subtle cinematic LUTs for DaVinci Resolve and iPhone Apple Log. <a href="https://orbitcolor.gumroad.com">See the free LUT</a>. Also: <a href="subtitle-shift-converter.html">SRT shifter</a> · <a href="aspect-ratio-crop-calculator.html">Crop calculator</a> · <a href="timecode-calculator.html">Timecode calculator</a> · <a href="slowmo-shutter-nd-calculator.html">Slow-mo / shutter / ND</a> · <a href="privacy.html">Privacy</a></p>
+</footer>
+</main>
+<script>
+const $ = id => document.getElementById(id);
+const num = id => { const v = parseFloat($(id).value); return isFinite(v) && v > 0 ? v : 0; };
+let mode = 'size';
+
+function seconds(){ return num('h')*3600 + num('m')*60 + num('s'); }
+function fmtBytes(b){
+  if (b >= 1e9) return (b/1e9).toFixed(2) + ' GB';
+  return (b/1e6).toFixed(1) + ' MB';
+}
+function fmtDur(t){
+  const h=Math.floor(t/3600), m=Math.floor(t%3600/60), s=Math.round(t%60);
+  return (h? h+' h ':'') + (m? m+' min ':'') + (s||(!h&&!m)? s+' s':'');
+}
+// size in bytes from Mbps video + kbps audio over t seconds
+function sizeBytes(vMbps, aKbps, t){ return (vMbps*1e6 + aKbps*1e3) * t / 8; }
+// video Mbps that fits target bytes
+function videoMbps(bytes, aKbps, t, marginPct){
+  const usable = bytes * (1 - marginPct/100);
+  return (usable*8/t - aKbps*1e3) / 1e6;
+}
+
+function calc(){
+  const t = seconds(), a = num('audio');
+  const r = $('result'), d = $('detail');
+  if (!t){ r.textContent='–'; d.textContent='Enter a duration.'; return; }
+  if (mode === 'size'){
+    const v = num('vrate');
+    const b = sizeBytes(v, a, t);
+    r.textContent = fmtBytes(b);
+    d.textContent = `${v} Mbps video + ${a} kbps audio for ${fmtDur(t)} · about ${(b/1e6/(t/60)).toFixed(1)} MB per minute`;
+  } else {
+    const bytes = num('size') * parseFloat($('unit').value) * 1e6;
+    const mg = Math.min(parseFloat($('margin').value)||0, 50);
+    const v = videoMbps(bytes, a, t, mg);
+    if (v <= 0){ r.textContent='Too small'; r.className='big warn'; d.textContent='The audio alone would fill this size. Lower the audio bitrate or raise the size.'; return; }
+    r.className='big';
+    r.textContent = v.toFixed(2) + ' Mbps video';
+    d.textContent = `Total ${(v + a/1000).toFixed(2)} Mbps including ${a} kbps audio, with a ${mg}% safety margin, for ${fmtDur(t)}`;
+  }
+  r.className = r.textContent==='Too small' ? 'big warn' : 'big';
+}
+
+function setMode(m){
+  mode = m;
+  $('t-size').setAttribute('aria-selected', m==='size');
+  $('t-rate').setAttribute('aria-selected', m==='rate');
+  $('p-size').hidden = m!=='size';
+  $('p-rate').hidden = m!=='rate';
+  calc();
+}
+$('t-size').onclick = () => setMode('size');
+$('t-rate').onclick = () => setMode('rate');
+$('preset').onchange = e => { if (e.target.value){ $('vrate').value = e.target.value; } calc(); };
+$('vrate').oninput = () => { $('preset').value=''; calc(); };
+document.querySelectorAll('input,select').forEach(el => el.addEventListener('input', calc));
+calc();
+if (typeof module !== 'undefined') module.exports = { sizeBytes, videoMbps };
+</script>
+</body>
+</html>
